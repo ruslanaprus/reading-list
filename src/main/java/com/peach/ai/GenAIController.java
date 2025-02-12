@@ -11,10 +11,12 @@ public class GenAIController {
 
     private final ChatService chatService;
     private final RecipeService recipeService;
+    private final ReadingList readingList;
 
-    public GenAIController(ChatService chatService, RecipeService recipeService) {
+    public GenAIController(ChatService chatService, RecipeService recipeService, ReadingList readingList) {
         this.chatService = chatService;
         this.recipeService = recipeService;
+        this.readingList = readingList;
     }
 
     @PostMapping("ask-ai")
@@ -32,6 +34,15 @@ public class GenAIController {
                                       @RequestParam(defaultValue = "any") String cuisine,
                                       @RequestParam(defaultValue = "") String dietaryRestrictions){
         return recipeService.createRecipe(ingredients, cuisine, dietaryRestrictions);
+    }
+
+    @PostMapping("reading-list")
+    public String readingListCreator(@RequestParam(defaultValue = "5") String number,
+                                     @RequestParam String genre,
+                                     @RequestParam String subject,
+                                     @RequestParam(defaultValue = "any") String decade,
+                                     @RequestParam(defaultValue = "") String example){
+        return readingList.createReadingList(number, genre, subject, decade, example);
     }
 
 }
