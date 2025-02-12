@@ -73,7 +73,9 @@ public class ReadingListService {
         books.forEach(book -> {
             GoogleBookDTO bookData = googleBooksService.searchBook(book.getTitle(), book.getAuthor());
             if (bookData != null) {
+                book.setSummary(bookData.getSummary() !=null ? bookData.getSummary() : book.getTitle());
                 book.setPages(bookData.getPageCount() != null ? bookData.getPageCount() : book.getPages());
+                book.setGoogleRating(bookData.getGoogleRating());
             }
 
         });

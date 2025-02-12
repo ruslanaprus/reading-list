@@ -9,5 +9,6 @@ public class GoogleBookDTO {
     private String title;
     private String author;
     private Integer pageCount;
+    private Double googleRating;
     private String summary;
 }

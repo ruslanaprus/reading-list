@@ -16,11 +16,9 @@ public class GoogleBooksService {
     private String apiKey;
     private static final String GOOGLE_BOOKS_URL = "https://www.googleapis.com/books/v1/volumes?q={query}&key={apiKey}";
     private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
 
-    public GoogleBooksService(RestTemplate restTemplate, ObjectMapper objectMapper) {
+    public GoogleBooksService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-        this.objectMapper = objectMapper;
     }
 
     public GoogleBookDTO searchBook(String title, String author){
@@ -37,9 +35,13 @@ public class GoogleBooksService {
             bookDTO.setTitle((String) volumeInfo.get("title"));
             bookDTO.setAuthor(author);
             bookDTO.setPageCount((Integer) volumeInfo.get("pageCount"));
+            bookDTO.setGoogleRating(volumeInfo.get("averageRating") instanceof Number ?
+                    ((Number) volumeInfo.get("averageRating")).doubleValue() : null);
+            bookDTO.setSummary((String) volumeInfo.get("description"));
 
             return bookDTO;
         }
         return null;
     }
+
 }
