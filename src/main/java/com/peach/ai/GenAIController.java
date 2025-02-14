@@ -1,9 +1,11 @@
 package com.peach.ai;
 
 import com.peach.ai.books.Book;
+import com.peach.ai.books.ReadingListRequest;
 import com.peach.ai.books.ReadingListService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,12 +18,12 @@ public class GenAIController {
 
     private final ChatService chatService;
     private final RecipeService recipeService;
-    private final ReadingListService readingList;
+    private final ReadingListService readingListService;
 
-    public GenAIController(ChatService chatService, RecipeService recipeService, ReadingListService readingList) {
+    public GenAIController(ChatService chatService, RecipeService recipeService, ReadingListService readingListService) {
         this.chatService = chatService;
         this.recipeService = recipeService;
-        this.readingList = readingList;
+        this.readingListService = readingListService;
     }
 
     @PostMapping("ask-ai")
@@ -42,12 +44,10 @@ public class GenAIController {
     }
 
     @PostMapping("reading-list")
-    public ResponseEntity<List<Book>> readingListCreator(@RequestParam(defaultValue = "5") String number,
-                                                         @RequestParam String genre,
-                                                         @RequestParam String subject,
-                                                         @RequestParam(defaultValue = "any") String decade,
-                                                         @RequestParam(defaultValue = "") String example){
-        return ResponseEntity.ok(readingList.createReadingList(number, genre, subject, decade, example));
+    public ResponseEntity<List<Book>> readingListCreator(@RequestBody ReadingListRequest request) {
+        return ResponseEntity.ok(readingListService.createReadingList(
+                request.getNumber(), request.getGenre(), request.getSubject(), request.getDecade(), request.getExample()
+        ));
     }
 
 }

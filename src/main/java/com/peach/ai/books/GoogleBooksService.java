@@ -1,6 +1,6 @@
 package com.peach.ai.books;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class GoogleBooksService {
 
     @Value("${books.api.key}")
@@ -22,26 +23,48 @@ public class GoogleBooksService {
     }
 
     public GoogleBookDTO searchBook(String title, String author){
-        String query = title + "+inauthor:" + author;
-        String url = GOOGLE_BOOKS_URL.replace("{query}", query).replace("{apiKey}", apiKey);
+        try{
+            String query = "intitle:\"" + title + "\"";//+inauthor:" + author;
+            String url = GOOGLE_BOOKS_URL.replace("{query}", query).replace("{apiKey}", apiKey);
 
-        ResponseEntity<Map> response = restTemplate.getForEntity(url, Map.class);
-        List<Map<String, Object>> items = (List<Map<String, Object>>) response.getBody().get("items");
+            String sanitizedUrl = url.replace(apiKey, "*****");
+            log.info("Searching for Google Books in {}", sanitizedUrl);
 
-        if (items != null && !items.isEmpty()) {
-            Map<String, Object> volumeInfo = (Map<String, Object>) items.get(0).get("volumeInfo");
+            ResponseEntity<Map> response = restTemplate.getForEntity(url, Map.class);
+            List<Map<String, Object>> items = (List<Map<String, Object>>) response.getBody().get("items");
 
-            GoogleBookDTO bookDTO = new GoogleBookDTO();
-            bookDTO.setTitle((String) volumeInfo.get("title"));
-            bookDTO.setAuthor(author);
-            bookDTO.setPageCount((Integer) volumeInfo.get("pageCount"));
-            bookDTO.setGoogleRating(volumeInfo.get("averageRating") instanceof Number ?
-                    ((Number) volumeInfo.get("averageRating")).doubleValue() : null);
-            bookDTO.setSummary((String) volumeInfo.get("description"));
+            if (items == null || items.isEmpty()) return null;
 
-            return bookDTO;
+            return extractBookInfo(items.get(0));
+        } catch (Exception e) {
+            log.error("Error fetching book details from Google Books API", e);
+            return null;
         }
-        return null;
+    }
+
+    private GoogleBookDTO extractBookInfo(Map<String, Object> item) {
+        Map<String, Object> volumeInfo = (Map<String, Object>) item.get("volumeInfo");
+
+        if (volumeInfo == null) {
+            return GoogleBookDTO.builder()
+                    .title("Unknown Title")
+                    .author("Unknown Author")
+                    .pageCount(0)
+                    .googleRating(0.0)
+                    .summary("No summary available")
+                    .build();
+        }
+
+        List<String> authors = (List<String>) volumeInfo.get("authors");
+        String author = (authors != null && !authors.isEmpty()) ? String.join(", ", authors) : "Unknown Author";
+
+        return GoogleBookDTO.builder()
+                .title((String) volumeInfo.get("title"))
+                .author(author)
+                .pageCount(((Number) volumeInfo.getOrDefault("pageCount", 0)).intValue())
+                .googleRating(((Number) volumeInfo.getOrDefault("averageRating", 0.0)).doubleValue())
+                .summary((String) volumeInfo.getOrDefault("description", "No summary available"))
+                .build();
     }
 
 }
