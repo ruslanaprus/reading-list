@@ -39,18 +39,15 @@ public class ReadingListService {
                 - If an example book is given (**{example}**), please consider its style, themes, or writing approach when making recommendations.
 
                 **Important:**
-                - Only return books with **verified authors** who are widely recognized.
+                - Do not hallucinate. Only return books with **verified authors** who are widely recognized.
                 - If unsure, return "author": "Unknown" instead of making up a name.
                 - Use reliable sources such as bestseller lists, literary awards, or books available in major libraries.
-
+                
+                Strictly return only JSON. No explanations, no extra text.
                 Return a JSON array of book objects, each with:
                 - "title": (string)
                 - "author": (string)
-                - "pages": (integer, optional)
                 - "summary": (string)
-
-                Do not hallucinate.
-                Strictly return only JSON. No explanations, no extra text.
                 """;
 
         PromptTemplate promptTemplate = new PromptTemplate(template);

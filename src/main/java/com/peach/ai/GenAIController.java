@@ -3,6 +3,7 @@ package com.peach.ai;
 import com.peach.ai.books.Book;
 import com.peach.ai.books.ReadingListRequest;
 import com.peach.ai.books.ReadingListService;
+import com.peach.ai.recipe.RecipeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

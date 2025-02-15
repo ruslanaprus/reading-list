@@ -1,4 +1,4 @@
-package com.peach.ai;
+package com.peach.ai.recipe;
 
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.Prompt;
