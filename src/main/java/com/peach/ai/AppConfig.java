@@ -1,7 +1,11 @@
 package com.peach.ai;
 
+import com.peach.ai.books.BookDataProvider;
+import com.peach.ai.books.GoogleBooksService;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
@@ -11,4 +15,12 @@ public class AppConfig {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
+
+    @Bean
+    @Primary
+    @ConditionalOnProperty(name = "books.provider", havingValue = "google", matchIfMissing = true)
+    public BookDataProvider googleProvider(GoogleBooksService service) {
+        return service;
+    }
+
 }

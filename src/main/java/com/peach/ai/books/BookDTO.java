@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GoogleBookDTO {
+public class BookDTO {
     private String title;
     private String author;
     private int pageCount;

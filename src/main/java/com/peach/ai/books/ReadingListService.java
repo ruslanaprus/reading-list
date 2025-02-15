@@ -7,6 +7,7 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,12 +17,14 @@ import java.util.Map;
 @Slf4j
 public class ReadingListService {
     private final ChatModel chatModel;
-    private final GoogleBooksService googleBooksService;
+    private final BookDataProvider bookDataProvider;
     private final ObjectMapper objectMapper;
 
-    public ReadingListService(ChatModel chatModel, GoogleBooksService googleBooksService, ObjectMapper objectMapper) {
+    public ReadingListService(ChatModel chatModel,
+                              @Qualifier("googleBooksService") BookDataProvider bookDataProvider,
+                              ObjectMapper objectMapper) {
         this.chatModel = chatModel;
-        this.googleBooksService = googleBooksService;
+        this.bookDataProvider = bookDataProvider;
         this.objectMapper = objectMapper;
     }
 
@@ -43,11 +46,12 @@ public class ReadingListService {
                 - If unsure, return "author": "Unknown" instead of making up a name.
                 - Use reliable sources such as bestseller lists, literary awards, or books available in major libraries.
                 
-                Strictly return only JSON. No explanations, no extra text.
+                Strictly return only JSON. No extra text apart from JSON. In case of issues add text to notesToUser.
                 Return a JSON array of book objects, each with:
                 - "title": (string)
                 - "author": (string)
                 - "summary": (string)
+                - "notesToUser": (string)
                 """;
 
         PromptTemplate promptTemplate = new PromptTemplate(template);
@@ -77,7 +81,7 @@ public class ReadingListService {
         }
 
         List<Book> books = parseAiResponse(aiResponse);
-        books.forEach(this::enrichWithGoogleBooksData);
+        books.forEach(this::enrichWithBookData);
 
         return books;
     }
@@ -92,9 +96,9 @@ public class ReadingListService {
         }
     }
 
-    // fetch additional book data from Google Books API
-    private void enrichWithGoogleBooksData(Book book) {
-        GoogleBookDTO bookData = googleBooksService.searchBook(book.getTitle(), book.getAuthor());
+    // fetch additional book data from Books API
+    private void enrichWithBookData(Book book) {
+        BookDTO bookData = bookDataProvider.fetchBookData(book.getTitle(), book.getAuthor());
         if (bookData != null) {
             if (bookData.getAuthor() != null && !bookData.getAuthor().isEmpty()) {
                 book.setAuthor(bookData.getAuthor());
