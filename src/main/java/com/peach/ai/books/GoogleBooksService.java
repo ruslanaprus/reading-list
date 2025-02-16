@@ -51,7 +51,7 @@ public class GoogleBooksService implements BookDataProvider {
                     .title("Unknown Title")
                     .author("Unknown Author")
                     .pageCount(0)
-                    .googleRating(0.0)
+                    .rating(0.0)
                     .summary("No summary available")
                     .build();
         }
@@ -63,7 +63,7 @@ public class GoogleBooksService implements BookDataProvider {
                 .title((String) volumeInfo.get("title"))
                 .author(author)
                 .pageCount(((Number) volumeInfo.getOrDefault("pageCount", 0)).intValue())
-                .googleRating(((Number) volumeInfo.getOrDefault("averageRating", 0.0)).doubleValue())
+                .rating(((Number) volumeInfo.getOrDefault("averageRating", 0.0)).doubleValue())
                 .summary((String) volumeInfo.getOrDefault("description", "No summary available"))
                 .build();
     }

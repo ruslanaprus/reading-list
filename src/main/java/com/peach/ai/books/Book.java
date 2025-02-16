@@ -13,6 +13,6 @@ public class Book {
     private String title;
     private String author;
     private int pages;
-    private double googleRating;
+    private double rating;
     private String summary;
 }

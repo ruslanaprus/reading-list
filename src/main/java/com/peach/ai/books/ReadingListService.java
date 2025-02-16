@@ -7,7 +7,8 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,10 +22,11 @@ public class ReadingListService {
     private final ObjectMapper objectMapper;
 
     public ReadingListService(ChatModel chatModel,
-                              @Qualifier("googleBooksService") BookDataProvider bookDataProvider,
+                              ApplicationContext context,
+                              @Value("${books.provider}") String bookProvider,
                               ObjectMapper objectMapper) {
         this.chatModel = chatModel;
-        this.bookDataProvider = bookDataProvider;
+        this.bookDataProvider = context.getBean(bookProvider + "Service", BookDataProvider.class);
         this.objectMapper = objectMapper;
     }
 
@@ -46,12 +48,11 @@ public class ReadingListService {
                 - If unsure, return "author": "Unknown" instead of making up a name.
                 - Use reliable sources such as bestseller lists, literary awards, or books available in major libraries.
                 
-                Strictly return only JSON. No extra text apart from JSON. In case of issues add text to notesToUser.
+                Strictly return only JSON. No extra text apart from JSON.
                 Return a JSON array of book objects, each with:
                 - "title": (string)
                 - "author": (string)
                 - "summary": (string)
-                - "notesToUser": (string)
                 """;
 
         PromptTemplate promptTemplate = new PromptTemplate(template);
@@ -103,9 +104,18 @@ public class ReadingListService {
             if (bookData.getAuthor() != null && !bookData.getAuthor().isEmpty()) {
                 book.setAuthor(bookData.getAuthor());
             }
-            book.setSummary(bookData.getSummary() != null ? bookData.getSummary() : book.getSummary());
+
+            if (bookData.getSummary() != null && !bookData.getSummary().isEmpty()) {
+                book.setSummary(bookData.getSummary());
+            } else {
+                // keep AI-generated summary if books api doesn't provide one
+                if (book.getSummary() != null && !book.getSummary().isEmpty()) {
+                    book.setSummary(book.getSummary());
+                }
+            }
+
             book.setPages(bookData.getPageCount() != 0 ? bookData.getPageCount() : book.getPages());
-            book.setGoogleRating(bookData.getGoogleRating());
+            book.setRating(bookData.getRating());
         }
     }
 

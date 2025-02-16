@@ -2,6 +2,7 @@ package com.peach.ai;
 
 import com.peach.ai.books.BookDataProvider;
 import com.peach.ai.books.GoogleBooksService;
+import com.peach.ai.books.OpenLibraryService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,5 +23,12 @@ public class AppConfig {
     public BookDataProvider googleProvider(GoogleBooksService service) {
         return service;
     }
+
+    @Bean
+    @ConditionalOnProperty(name = "books.provider", havingValue = "openLibrary")
+    public BookDataProvider openLibraryProvider(OpenLibraryService service) {
+        return service;
+    }
+
 
 }

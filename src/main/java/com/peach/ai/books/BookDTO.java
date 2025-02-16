@@ -11,6 +11,6 @@ public class BookDTO {
     private String title;
     private String author;
     private int pageCount;
-    private double googleRating;
+    private double rating;
     private String summary;
 }
