@@ -1,8 +1,9 @@
 package com.peach.ai;
 
 import com.peach.ai.books.BookDataProvider;
-import com.peach.ai.books.GoogleBooksService;
-import com.peach.ai.books.OpenLibraryService;
+import com.peach.ai.books.providerapi.GoogleBooksService;
+import com.peach.ai.books.providerapi.OpenLibraryService;
+import com.peach.ai.books.providerapi.WikiBooksService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,5 +31,10 @@ public class AppConfig {
         return service;
     }
 
+    @Bean
+    @ConditionalOnProperty(name = "books.provider", havingValue = "wikiBooks")
+    public BookDataProvider wikiBooksProvider(WikiBooksService service) {
+        return service;
+    }
 
 }

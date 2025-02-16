@@ -1,5 +1,7 @@
-package com.peach.ai.books;
+package com.peach.ai.books.providerapi;
 
+import com.peach.ai.books.BookDTO;
+import com.peach.ai.books.BookDataProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
