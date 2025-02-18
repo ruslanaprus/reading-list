@@ -1,16 +1,16 @@
 package com.peach.ai;
 
-import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.ollama.api.OllamaOptions;
+import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatModel;
+import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatOptions;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ChatService {
-    private final ChatModel chatModel;
+    private final VertexAiGeminiChatModel chatModel;
 
-    public ChatService(ChatModel chatModel) {
+    public ChatService(VertexAiGeminiChatModel chatModel) {
         this.chatModel = chatModel;
     }
 
@@ -22,7 +22,7 @@ public class ChatService {
         ChatResponse chatResponse = chatModel.call(
                 new Prompt(
                         prompt,
-                        OllamaOptions.builder()
+                        VertexAiGeminiChatOptions.builder()
                                 .temperature(0.4)
                                 .build()
                 ));

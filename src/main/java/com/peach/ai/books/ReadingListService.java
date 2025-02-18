@@ -3,11 +3,11 @@ package com.peach.ai.books;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.chat.model.ChatModel;
-import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.converter.BeanOutputConverter;
+import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatModel;
+import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.ParameterizedTypeReference;
@@ -19,11 +19,11 @@ import java.util.Map;
 @Service
 @Slf4j
 public class ReadingListService {
-    private final ChatModel chatModel;
+    private final VertexAiGeminiChatModel chatModel;
     private final BookDataProvider bookDataProvider;
     private final ObjectMapper objectMapper;
 
-    public ReadingListService(ChatModel chatModel,
+    public ReadingListService(VertexAiGeminiChatModel chatModel,
                               ApplicationContext context,
                               @Value("${books.provider}") String bookProvider,
                               ObjectMapper objectMapper) {
@@ -72,7 +72,7 @@ public class ReadingListService {
         );
 
         Prompt prompt = promptTemplate.create(params,
-                ChatOptions.builder()
+                VertexAiGeminiChatOptions.builder()
                         .temperature(0.0)
                         .build());
 
