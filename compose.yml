@@ -1,0 +1,9 @@
+services:
+  rabbitmq:
+    container_name: 'book-rabbitmq'
+    image: 'rabbitmq:latest'
+    environment:
+      - 'RABBITMQ_DEFAULT_PASS=secret'
+      - 'RABBITMQ_DEFAULT_USER=user'
+    ports:
+      - '5672:5672'
