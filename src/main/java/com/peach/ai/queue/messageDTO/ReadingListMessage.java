@@ -12,6 +12,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReadingListMessage implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String requestId;
     private ReadingListRequest request;
 }

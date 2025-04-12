@@ -28,6 +28,7 @@ public class ReadingListConsumer {
 
     @RabbitListener(queues = RabbitMQConfig.REQUEST_QUEUE)
     public void processReadingListRequest(String message) {
+        log.info("Received message: {}", message);
         try {
             ReadingListMessage request = objectMapper.readValue(message, ReadingListMessage.class);
             List<Book> books = readingListService.createReadingList(
