@@ -1,7 +1,5 @@
 package com.peach.ai.books;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
@@ -21,15 +19,12 @@ import java.util.Map;
 public class ReadingListService {
     private final VertexAiGeminiChatModel chatModel;
     private final BookDataProvider bookDataProvider;
-    private final ObjectMapper objectMapper;
 
     public ReadingListService(VertexAiGeminiChatModel chatModel,
                               ApplicationContext context,
-                              @Value("${books.provider}") String bookProvider,
-                              ObjectMapper objectMapper) {
+                              @Value("${books.provider}") String bookProvider) {
         this.chatModel = chatModel;
         this.bookDataProvider = context.getBean(bookProvider + "Service", BookDataProvider.class);
-        this.objectMapper = objectMapper;
     }
 
     public List<Book> createReadingList(String number,
@@ -82,26 +77,11 @@ public class ReadingListService {
 
         log.info("Response from AI: {}", aiResponse);
 
-        // handle non-JSON responses
-        if (!aiResponse.startsWith("[")) {
-            log.error("Invalid AI response: {}", aiResponse);
-            throw new RuntimeException("Invalid AI response: Expected JSON array");
-        }
-
         List<Book> books = outputConverter.convert(aiResponse);
+
         books.forEach(this::enrichWithBookData);
 
         return books;
-    }
-
-    // parse JSON response from AI
-    private List<Book> parseAiResponse(String response) {
-        try {
-            return objectMapper.readValue(response, new TypeReference<>() {});
-        } catch (Exception e) {
-            log.error("Failed to parse AI response", e);
-            throw new RuntimeException("Failed to parse AI response", e);
-        }
     }
 
     // fetch additional book data from Books API
