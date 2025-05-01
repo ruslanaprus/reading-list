@@ -8,3 +8,10 @@ services:
     ports:
       - '5672:5672'
       - '15672:15672'
+
+  redis:
+    container_name: 'book-redis'
+    image: 'redis:latest'
+    ports:
+      - '6379:6379'
+    command: redis-server --appendonly yes

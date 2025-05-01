@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.peach.ai.books.Book;
 import com.peach.ai.books.ReadingListService;
 import com.peach.ai.queue.messageDTO.ReadingListMessage;
-import com.peach.ai.queue.messageDTO.ReadingListResponse;
+import com.peach.ai.queue.repository.ReadingListRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -17,13 +17,13 @@ import java.util.List;
 @Slf4j
 public class ReadingListConsumer {
     private final ReadingListService readingListService;
-    private final RabbitTemplate rabbitTemplate;
     private final ObjectMapper objectMapper;
+    private final ReadingListRepository readingListRepository;
 
-    public ReadingListConsumer(ReadingListService readingListService, RabbitTemplate rabbitTemplate, ObjectMapper objectMapper) {
+    public ReadingListConsumer(ReadingListService readingListService, ObjectMapper objectMapper, ReadingListRepository readingListRepository) {
         this.readingListService = readingListService;
-        this.rabbitTemplate = rabbitTemplate;
         this.objectMapper = objectMapper;
+        this.readingListRepository = readingListRepository;
     }
 
     @RabbitListener(queues = RabbitMQConfig.REQUEST_QUEUE)
@@ -40,10 +40,11 @@ public class ReadingListConsumer {
             );
 
             log.info("Generated reading list: {}", books);
-            String response = objectMapper.writeValueAsString(new ReadingListResponse(request.getRequestId(), books));
-            rabbitTemplate.convertAndSend(RabbitMQConfig.RESPONSE_QUEUE, response);
+
+            readingListRepository.saveResponse(request.getRequestId(), books);
+
         } catch (JsonProcessingException e) {
-            log.error("Failed to process reading list request", e);
+            log.error("Failed to process reading list request: {}", e.getMessage());
         }
     }
 }
