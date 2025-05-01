@@ -3,7 +3,6 @@ package com.peach.ai.books;
 import com.peach.ai.queue.RabbitMQConfig;
 import com.peach.ai.queue.messageDTO.ReadingListMessage;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,11 +17,9 @@ import java.util.UUID;
 @RequestMapping("/api/books")
 public class BookController {
 
-    private final ReadingListService readingListService;
     private final RabbitTemplate rabbitTemplate;
 
-    public BookController(ReadingListService readingListService, RabbitTemplate rabbitTemplate) {
-        this.readingListService = readingListService;
+    public BookController(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
 
