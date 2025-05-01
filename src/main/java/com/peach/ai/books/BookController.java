@@ -26,24 +26,6 @@ public class BookController {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-//    @PostMapping("reading-list")
-//    public ResponseEntity<List<Book>> readingListCreator(@RequestBody ReadingListRequest request) {
-//        return ResponseEntity.ok(readingListService.createReadingList(
-//                request.getNumber(), request.getGenre(), request.getSubject(), request.getDecade(), request.getExample()
-//        ));
-//    }
-
-//    @PostMapping("reading-list")
-//    public ResponseEntity<String> readingListCreator(@RequestBody ReadingListRequest request) {
-//        String requestId = UUID.randomUUID().toString();
-//        try {
-//            rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE, RabbitMQConfig.ROUTING_KEY, new ReadingListMessage(requestId, request));
-//            return ResponseEntity.accepted().body("Request received. Use requestId: " + requestId + " to retrieve the results.");
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process request.");
-//        }
-//    }
-
     @PostMapping("reading-list")
     public ResponseEntity<String> readingListCreator(@RequestBody ReadingListRequest request) {
         String requestId = UUID.randomUUID().toString();
