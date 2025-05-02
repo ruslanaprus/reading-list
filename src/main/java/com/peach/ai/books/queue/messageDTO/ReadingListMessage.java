@@ -1,7 +1,7 @@
-package com.peach.ai.queue.messageDTO;
+package com.peach.ai.books.queue.messageDTO;
 
 
-import com.peach.ai.books.ReadingListRequest;
+import com.peach.ai.books.model.ReadingListRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

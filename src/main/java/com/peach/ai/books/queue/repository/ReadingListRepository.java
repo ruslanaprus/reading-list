@@ -1,9 +1,9 @@
-package com.peach.ai.queue.repository;
+package com.peach.ai.books.queue.repository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.peach.ai.books.Book;
+import com.peach.ai.books.model.Book;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 

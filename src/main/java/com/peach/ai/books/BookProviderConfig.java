@@ -1,6 +1,5 @@
-package com.peach.ai;
+package com.peach.ai.books;
 
-import com.peach.ai.books.BookDataProvider;
 import com.peach.ai.books.providerapi.GoogleBooksService;
 import com.peach.ai.books.providerapi.OpenLibraryService;
 import com.peach.ai.books.providerapi.WikiBooksService;
@@ -11,7 +10,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class AppConfig {
+public class BookProviderConfig {
 
     @Bean
     public RestTemplate restTemplate() {

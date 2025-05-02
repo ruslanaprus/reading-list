@@ -1,4 +1,4 @@
-package com.peach.ai.books;
+package com.peach.ai.books.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
