@@ -1,0 +1,39 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+### Request a reading list (e.g., 3 detective books)
+# @name createReadingList
+POST http://localhost:8080/api/books/reading-list
+Content-Type: application/json
+
+{
+  "number": "3",
+  "genre": "Detective",
+  "subject": "Mystery",
+  "decade": "any",
+  "example": "Sherlock Holmes"
+}
+
+### Get the reading list result using the requestId from the previous response
+# Extract the requestId from the response body of the 'createReadingList' request
+# The regex captures the UUID after "requestId: "
+#> {%
+   client.global.set("requestId", response.body.match(/requestId: (.*)/)[1].trim());
+%}
+GET http://localhost:8080/api/books/reading-list/{{requestId}}
+
+### Ask the AI a general question (works with Ollama or Gemini)
+POST http://localhost:8080/api/chat/ask-ai
+Content-Type: application/x-www-form-urlencoded
+
+prompt=What is the capital of France?
+
+### Ask the AI for a recipe (works with Ollama or Gemini)
+POST http://localhost:8080/api/chat/recipe-creator
+Content-Type: application/x-www-form-urlencoded
+
+ingredients=chicken, rice, broccoli&cuisine=any&dietaryRestrictions=gluten-free
+
+### Chat with Gemini (Only works if chat.model=gemini is active)
+GET http://localhost:8080/api/gemini/chat?message=Tell%20me%20a%20joke

@@ -2,6 +2,7 @@ package com.peach.ai;
 
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatModel;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/gemini")
+@ConditionalOnProperty(name = "chat.model", havingValue = "gemini")
 public class GeminiController {
 
     private VertexAiGeminiChatModel chatModel;
