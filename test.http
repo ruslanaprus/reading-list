@@ -16,12 +16,28 @@ Content-Type: application/json
 }
 
 ### Get the reading list result using the requestId from the previous response
-# Extract the requestId from the response body of the 'createReadingList' request
-# The regex captures the UUID after "requestId: "
+# Extracts the requestId from the response body of the 'createReadingList' request.
+# Assumes the response body contains a line like "requestId: <uuid>"
 #> {%
-   client.global.set("requestId", response.body.match(/requestId: (.*)/)[1].trim());
-%}
-GET http://localhost:8080/api/books/reading-list/{{requestId}}
+#  const body = response.body;
+#  let requestId = null;
+#  if (body) {
+#    const match = body.match(/requestId:\s*([a-fA-F0-9-]+)/); // More specific regex for UUID
+#    if (match && match[1]) {
+#      requestId = match[1].trim();
+#      client.log("Extracted requestId: " + requestId);
+#      client.global.set("requestId", requestId);
+#    } else {
+#      client.log("Could not find requestId in the response body.");
+#      client.log("Response Body: " + body);
+#    }
+#  } else {
+#    client.log("Response body is empty.");
+#  }
+#%}
+#GET http://localhost:8080/api/books/reading-list/{{requestId}}
+
+GET http://localhost:8080/api/books/reading-list/c5d58a43-3607-495a-bea2-6a7f63724021
 
 ### Ask the AI a general question (works with Ollama or Gemini)
 POST http://localhost:8080/api/chat/ask-ai
