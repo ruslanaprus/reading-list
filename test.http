@@ -37,7 +37,7 @@ Content-Type: application/json
 #%}
 #GET http://localhost:8080/api/books/reading-list/{{requestId}}
 
-GET http://localhost:8080/api/books/reading-list/c5d58a43-3607-495a-bea2-6a7f63724021
+GET http://localhost:8080/api/books/reading-list/16412d1b-9f5e-4650-adb6-c3e4703e1cd9
 
 ### Ask the AI a general question (works with Ollama or Gemini)
 POST http://localhost:8080/api/chat/ask-ai
