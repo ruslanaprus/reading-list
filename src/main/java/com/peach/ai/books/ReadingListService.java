@@ -1,11 +1,13 @@
 package com.peach.ai.books;
 
+import com.peach.ai.books.model.Book;
+import com.peach.ai.books.model.BookDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.converter.BeanOutputConverter;
-import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatModel;
-import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.ParameterizedTypeReference;
@@ -17,13 +19,16 @@ import java.util.Map;
 @Service
 @Slf4j
 public class ReadingListService {
-    private final VertexAiGeminiChatModel chatModel;
+    private final ChatModel chatModel;
+    private final ChatOptions chatOptions;
     private final BookDataProvider bookDataProvider;
 
-    public ReadingListService(VertexAiGeminiChatModel chatModel,
+    public ReadingListService(ChatModel chatModel,
+                              ChatOptions chatOptions,
                               ApplicationContext context,
                               @Value("${books.provider}") String bookProvider) {
         this.chatModel = chatModel;
+        this.chatOptions = chatOptions;
         this.bookDataProvider = context.getBean(bookProvider + "Service", BookDataProvider.class);
     }
 
@@ -66,10 +71,7 @@ public class ReadingListService {
                 "format", format
         );
 
-        Prompt prompt = promptTemplate.create(params,
-                VertexAiGeminiChatOptions.builder()
-                        .temperature(0.0)
-                        .build());
+        Prompt prompt = promptTemplate.create(params, chatOptions);
 
         log.info(prompt.toString());
 

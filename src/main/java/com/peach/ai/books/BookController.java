@@ -1,8 +1,10 @@
 package com.peach.ai.books;
 
-import com.peach.ai.queue.RabbitMQConfig;
-import com.peach.ai.queue.messageDTO.ReadingListMessage;
-import com.peach.ai.queue.repository.ReadingListRepository;
+import com.peach.ai.books.model.Book;
+import com.peach.ai.books.model.ReadingListRequest;
+import com.peach.ai.books.queue.RabbitMQConfig;
+import com.peach.ai.books.queue.messageDTO.ReadingListMessage;
+import com.peach.ai.books.queue.repository.ReadingListRepository;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

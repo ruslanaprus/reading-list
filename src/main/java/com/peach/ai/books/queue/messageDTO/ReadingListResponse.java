@@ -1,6 +1,6 @@
-package com.peach.ai.queue.messageDTO;
+package com.peach.ai.books.queue.messageDTO;
 
-import com.peach.ai.books.Book;
+import com.peach.ai.books.model.Book;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

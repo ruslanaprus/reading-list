@@ -1,14 +1,13 @@
-package com.peach.ai.queue;
+package com.peach.ai.books.queue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.peach.ai.books.Book;
+import com.peach.ai.books.model.Book;
 import com.peach.ai.books.ReadingListService;
-import com.peach.ai.queue.messageDTO.ReadingListMessage;
-import com.peach.ai.queue.repository.ReadingListRepository;
+import com.peach.ai.books.queue.messageDTO.ReadingListMessage;
+import com.peach.ai.books.queue.repository.ReadingListRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

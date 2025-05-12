@@ -1,4 +1,4 @@
-package com.peach.ai.books;
+package com.peach.ai.books.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

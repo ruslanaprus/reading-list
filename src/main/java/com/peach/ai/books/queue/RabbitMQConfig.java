@@ -1,4 +1,4 @@
-package com.peach.ai.queue;
+package com.peach.ai.books.queue;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
