@@ -2,6 +2,9 @@ package com.peach.ai.books.providerapi;
 
 import com.peach.ai.books.model.BookDTO;
 import com.peach.ai.books.BookDataProvider;
+import com.peach.ai.books.providerapi.model.GoogleBookItem;
+import com.peach.ai.books.providerapi.model.GoogleBooksResponse;
+import com.peach.ai.books.providerapi.model.VolumeInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Slf4j
@@ -33,20 +35,23 @@ public class GoogleBooksService implements BookDataProvider {
             String sanitizedUrl = url.replace(apiKey, "*****");
             log.info("Searching for Google Books in {}", sanitizedUrl);
 
-            ResponseEntity<Map> response = restTemplate.getForEntity(url, Map.class);
-            List<Map<String, Object>> items = (List<Map<String, Object>>) response.getBody().get("items");
+            // Use the model class directly with RestTemplate
+            ResponseEntity<GoogleBooksResponse> response = restTemplate.getForEntity(url, GoogleBooksResponse.class);
+            
+            GoogleBooksResponse booksResponse = response.getBody();
+            if (booksResponse == null || booksResponse.getItems() == null || booksResponse.getItems().isEmpty()) {
+                return null;
+            }
 
-            if (items == null || items.isEmpty()) return null;
-
-            return extractBookInfo(items.get(0));
+            return extractBookInfo(booksResponse.getItems().get(0));
         } catch (Exception e) {
             log.error("Error fetching book details from Google Books API", e);
             return null;
         }
     }
 
-    private BookDTO extractBookInfo(Map<String, Object> item) {
-        Map<String, Object> volumeInfo = (Map<String, Object>) item.get("volumeInfo");
+    private BookDTO extractBookInfo(GoogleBookItem item) {
+        VolumeInfo volumeInfo = item.getVolumeInfo();
 
         if (volumeInfo == null) {
             return BookDTO.builder()
@@ -58,15 +63,15 @@ public class GoogleBooksService implements BookDataProvider {
                     .build();
         }
 
-        List<String> authors = (List<String>) volumeInfo.get("authors");
+        List<String> authors = volumeInfo.getAuthors();
         String author = (authors != null && !authors.isEmpty()) ? String.join(", ", authors) : "Unknown Author";
 
         return BookDTO.builder()
-                .title((String) volumeInfo.get("title"))
+                .title(volumeInfo.getTitle() != null ? volumeInfo.getTitle() : "Unknown Title")
                 .author(author)
-                .pageCount(((Number) volumeInfo.getOrDefault("pageCount", 0)).intValue())
-                .rating(((Number) volumeInfo.getOrDefault("averageRating", 0.0)).doubleValue())
-                .summary((String) volumeInfo.getOrDefault("description", "No summary available"))
+                .pageCount(volumeInfo.getPageCount() != null ? volumeInfo.getPageCount() : 0)
+                .rating(volumeInfo.getAverageRating() != null ? volumeInfo.getAverageRating() : 0.0)
+                .summary(volumeInfo.getDescription() != null ? volumeInfo.getDescription() : "No summary available")
                 .build();
     }
 
