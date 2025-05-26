@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reading List Results</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.onload = function() {
+            const isReady = /*[[${ready}]]*/ false;
+            if (!isReady) {
+                setTimeout(function() {
+                    location.reload();
+                }, 5000); // Reload every 5 seconds until results are ready
+            }
+        }
+        /*]]>*/
+    </script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Your Reading List</h1>
+            <nav class="main-nav">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/browse" class="nav-link">Browse Lists</a>
+            </nav>
+        </header>
+        
+        <main>
+            <div th:if="${ready}" class="results-container">
+                <div class="results-actions">
+                    <a href="/" class="btn-action">Create Another List</a>
+                    <button onclick="window.print()" class="btn-action">Print List</button>
+                </div>
+                
+                <div class="book-list">
+                    <div th:each="book : ${books}" class="book-card">
+                        <h2 class="book-title" th:text="${book.title}">Book Title</h2>
+                        <h3 class="book-author" th:text="${book.author}">Author Name</h3>
+                        <div class="book-details">
+                            <span class="book-pages" th:text="${book.pages} + ' pages'">300 pages</span>
+                            <span class="book-rating" th:text="${book.rating} + '/5'">4.5/5</span>
+                        </div>
+                        <p class="book-summary" th:text="${book.summary}">Book summary goes here...</p>
+                        <div class="book-actions">
+                            <a th:href="${'https://www.goodreads.com/search?q=' + book.title + ' ' + book.author}" 
+                               target="_blank" class="book-link">View on Goodreads</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div th:unless="${ready}" class="loading-container">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Your reading list is being generated...</p>
+                <p class="loading-info">This may take a few moments as our AI creates personalized book recommendations for you.</p>
+                <p class="request-id">Request ID: <span th:text="${requestId}">12345</span></p>
+            </div>
+        </main>
+        
+        <footer>
+            <p>&copy; 2025 Reading List Generator</p>
+        </footer>
+    </div>
+</body>
+</html>
