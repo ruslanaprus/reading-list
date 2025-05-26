@@ -2,13 +2,14 @@ package com.peach.ai.books.providerapi;
 
 import com.peach.ai.books.model.BookDTO;
 import com.peach.ai.books.BookDataProvider;
+import com.peach.ai.books.providerapi.model.WikiBook;
+import com.peach.ai.books.providerapi.model.WikiBooksResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,24 +25,31 @@ public class WikiBooksService implements BookDataProvider {
 
     @Override
     public BookDTO fetchBookData(String name, String author) {
-        ResponseEntity<Map> response = restTemplate.getForEntity(WIKI_BOOKS_URL, Map.class, name);
-        List<Map<String, Object>> books = (List<Map<String, Object>>) response.getBody().get("books");
+        ResponseEntity<WikiBooksResponse> response = restTemplate.getForEntity(
+            WIKI_BOOKS_URL,
+            WikiBooksResponse.class,
+            name
+        );
+        
+        WikiBooksResponse booksResponse = response.getBody();
+        if (booksResponse == null || booksResponse.getBooks() == null || booksResponse.getBooks().isEmpty()) {
+            return null;
+        }
 
-        if (books == null || books.isEmpty()) return null;
-
+        List<WikiBook> books = booksResponse.getBooks();
         log.info("Fetched {} books for title: '{}'", books.size(), name);
 
         return extractBookInfo(books.get(0));
     }
 
-    private BookDTO extractBookInfo(Map<String, Object> book) {
-        String author = (String) book.get("author");
-        author = (author != null || author.isEmpty()) ? author : "Unknown";
+    private BookDTO extractBookInfo(WikiBook book) {
+        String author = book.getAuthor();
+        author = (author != null && !author.isEmpty()) ? author : "Unknown";
 
-        Integer pageCount = parsePageCount(book.get("pages"));
+        Integer pageCount = parsePageCount(book.getPages());
 
         return BookDTO.builder()
-                .title((String) book.get("name"))
+                .title(book.getName())
                 .author(author)
                 .pageCount(pageCount)
                 .summary("")
@@ -59,5 +67,4 @@ public class WikiBooksService implements BookDataProvider {
         }
         return 0;
     }
-
 }
