@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Reading Lists</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>All Generated Reading Lists</h1>
+            <nav class="main-nav">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/browse" class="nav-link active">Browse Lists</a>
+            </nav>
+        </header>
+        
+        <main>
+            <div class="reading-lists-container">
+                <div th:if="${!readingLists.isEmpty()}" class="reading-lists">
+                    <div th:each="entry : ${readingLists}" class="reading-list-entry">
+                        <div class="reading-list-header">
+                            <h3 class="request-info" th:text="${'Genre: ' + entry.key.genre + ' - Subject: ' + entry.key.subject}">Genre: Fantasy - Subject: Dragons</h3>
+                            <span class="book-count" th:text="${entry.value.size() + ' books'}">5 books</span>
+                        </div>
+                        <div class="book-list-preview">
+                            <div th:each="book, bookStat : ${entry.value}" th:if="${bookStat.index < 3}" class="book-preview">
+                                <span class="book-title" th:text="${book.title}">Book Title</span> by 
+                                <span class="book-author" th:text="${book.author}">Author Name</span>
+                            </div>
+                            <a th:href="@{'/results/' + ${readingListIds.get(entry.key)}}" class="view-list-btn">View Full List</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div th:if="${readingLists.isEmpty()}" class="no-lists">
+                    <p>No reading lists have been generated yet.</p>
+                    <a href="/" class="btn-primary">Generate Your First Reading List</a>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>&copy; 2025 Reading List Generator</p>
+        </footer>
+    </div>
+</body>
+</html>
