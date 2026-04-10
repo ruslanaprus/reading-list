@@ -1,0 +1,55 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+### Request a reading list (e.g., 3 detective books)
+# @name createReadingList
+POST http://localhost:8080/api/books/reading-list
+Content-Type: application/json
+
+{
+  "number": "3",
+  "genre": "Detective",
+  "subject": "Mystery",
+  "decade": "any",
+  "example": "Sherlock Holmes"
+}
+
+### Get the reading list result using the requestId from the previous response
+# Extracts the requestId from the response body of the 'createReadingList' request.
+# Assumes the response body contains a line like "requestId: <uuid>"
+#> {%
+#  const body = response.body;
+#  let requestId = null;
+#  if (body) {
+#    const match = body.match(/requestId:\s*([a-fA-F0-9-]+)/); // More specific regex for UUID
+#    if (match && match[1]) {
+#      requestId = match[1].trim();
+#      client.log("Extracted requestId: " + requestId);
+#      client.global.set("requestId", requestId);
+#    } else {
+#      client.log("Could not find requestId in the response body.");
+#      client.log("Response Body: " + body);
+#    }
+#  } else {
+#    client.log("Response body is empty.");
+#  }
+#%}
+#GET http://localhost:8080/api/books/reading-list/{{requestId}}
+
+GET http://localhost:8080/api/books/reading-list/16412d1b-9f5e-4650-adb6-c3e4703e1cd9
+
+### Ask the AI a general question (works with Ollama or Gemini)
+POST http://localhost:8080/api/chat/ask-ai
+Content-Type: application/x-www-form-urlencoded
+
+prompt=What is the capital of France?
+
+### Ask the AI for a recipe (works with Ollama or Gemini)
+POST http://localhost:8080/api/chat/recipe-creator
+Content-Type: application/x-www-form-urlencoded
+
+ingredients=chicken, rice, broccoli&cuisine=any&dietaryRestrictions=gluten-free
+
+### Chat with Gemini (Only works if chat.model=gemini is active)
+GET http://localhost:8080/api/gemini/chat?message=Tell%20me%20a%20joke

@@ -5,17 +5,16 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.google.genai.GoogleGenAiChatModel;
 import org.springframework.ai.google.genai.GoogleGenAiChatOptions;
-import org.springframework.ai.ollama.OllamaChatModel;
-import org.springframework.ai.ollama.api.OllamaChatOptions;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 
 @Configuration
-public class ChatModelConfig {
+@Profile("gemini")
+public class GeminiConfig {
 
     private static final String API_KEY_PROP = "spring.ai.google.genai.api-key";
     private static final String PROJECT_ID_PROP = "spring.ai.google.genai.project-id";
@@ -52,13 +51,6 @@ public class ChatModelConfig {
     }
 
     @Bean
-    @Primary
-    @ConditionalOnProperty(name = "chat.model", havingValue = "ollama")
-    public ChatModel customOllamaChatModel(OllamaChatModel ollama) {
-        return ollama;
-    }
-
-    @Bean
     @ConditionalOnProperty(name = "chat.model", havingValue = "gemini")
     public ChatOptions geminiChatOptions() {
         return GoogleGenAiChatOptions.builder()
@@ -66,14 +58,4 @@ public class ChatModelConfig {
                 .temperature(0.0)
                 .build();
     }
-
-    @Bean
-    @ConditionalOnProperty(name = "chat.model", havingValue = "ollama")
-    public ChatOptions ollamaChatOptions(@Value("${spring.ai.ollama.chat.options.model}") String model) {
-        return OllamaChatOptions.builder()
-                .model(model)
-                .temperature(0.0)
-                .build();
-    }
-
 }
