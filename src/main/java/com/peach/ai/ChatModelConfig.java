@@ -45,7 +45,7 @@ public class ChatModelConfig {
         return GoogleGenAiChatModel.builder()
                 .genAiClient(clientBuilder.build())
                 .defaultOptions(GoogleGenAiChatOptions.builder()
-                        .model("gemini-3.1-flash-lite-preview")
+                        .model("gemini-2.5-flash")
                         .temperature(0.0)
                         .build())
                 .build();
@@ -62,7 +62,7 @@ public class ChatModelConfig {
     @ConditionalOnProperty(name = "chat.model", havingValue = "gemini")
     public ChatOptions geminiChatOptions() {
         return GoogleGenAiChatOptions.builder()
-                .model("gemini-3.1-flash-lite-preview")
+                .model("gemini-2.5-flash")
                 .temperature(0.0)
                 .build();
     }
