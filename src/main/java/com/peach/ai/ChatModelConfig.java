@@ -12,18 +12,22 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.lang.Nullable;
+import org.springframework.core.env.Environment;
 
 @Configuration
 public class ChatModelConfig {
 
+    private static final String API_KEY_PROP = "spring.ai.google.genai.api-key";
+    private static final String PROJECT_ID_PROP = "spring.ai.google.genai.project-id";
+    private static final String LOCATION_PROP = "spring.ai.google.genai.location";
+
     @Bean
     @Primary
     @ConditionalOnProperty(name = "chat.model", havingValue = "gemini")
-    public ChatModel geminiChatModel(
-            @Nullable @Value("${spring.ai.google.genai.api-key}") String apiKey,
-            @Nullable @Value("${spring.ai.google.genai.project-id}") String projectId,
-            @Nullable @Value("${spring.ai.google.genai.location}") String location) {
+    public ChatModel geminiChatModel(Environment env) {
+        String apiKey = env.getProperty(API_KEY_PROP);
+        String projectId = env.getProperty(PROJECT_ID_PROP);
+        String location = env.getProperty(LOCATION_PROP);
 
         Client.Builder clientBuilder = Client.builder();
 
@@ -35,13 +39,13 @@ public class ChatModelConfig {
                     .vertexAI(true);
         } else {
             throw new IllegalStateException(
-                    "Either 'spring.ai.google.genai.api-key' or 'spring.ai.google.genai.project-id' + 'spring.ai.google.genai.location' must be configured");
+                    "Either '" + API_KEY_PROP + "' or ('" + PROJECT_ID_PROP + "' + '" + LOCATION_PROP + "') must be configured");
         }
 
         return GoogleGenAiChatModel.builder()
                 .genAiClient(clientBuilder.build())
                 .defaultOptions(GoogleGenAiChatOptions.builder()
-                        .model("gemini-2.0-flash")
+                        .model("gemini-3.1-flash-lite-preview")
                         .temperature(0.0)
                         .build())
                 .build();
@@ -58,7 +62,7 @@ public class ChatModelConfig {
     @ConditionalOnProperty(name = "chat.model", havingValue = "gemini")
     public ChatOptions geminiChatOptions() {
         return GoogleGenAiChatOptions.builder()
-                .model("gemini-2.0-flash")
+                .model("gemini-3.1-flash-lite-preview")
                 .temperature(0.0)
                 .build();
     }
