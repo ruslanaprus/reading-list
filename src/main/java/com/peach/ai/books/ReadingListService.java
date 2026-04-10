@@ -75,7 +75,7 @@ public class ReadingListService {
 
         log.info(prompt.toString());
 
-        String aiResponse = chatModel.call(prompt).getResult().getOutput().getContent();
+        String aiResponse = chatModel.call(prompt).getResult().getOutput().getText();
 
         log.info("Response from AI: {}", aiResponse);
 
